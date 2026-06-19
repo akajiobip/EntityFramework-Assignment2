@@ -3,30 +3,70 @@ using EntityFramework.Models;
 
 var context = new EFCoreDemoDbContext();
 
-// Step 3: Add three users (only if not already added)
-if (!context.Users.Any())
-{
-    var user1 = new User { Name = "Alice Smith", EmailAddress = "alice@email.com", PhoneNumber = "555-1111" };
-    var user2 = new User { Name = "Bob Jones", EmailAddress = "bob@email.com", PhoneNumber = "555-2222" };
-    var user3 = new User { Name = "Carol White", EmailAddress = "carol@email.com", PhoneNumber = "555-3333" };
+TestDatabase();
 
-    context.Users.AddRange(user1, user2, user3);
-    context.SaveChanges();
+void TestDatabase()
+{
+    // List all users first
+    ListAllUsers();
+
+    // Add a new user
+    AddUser();
+    ListAllUsers();
+
+    // Update a user
+    UpdateUser();
+    ListAllUsers();
+
+    // Delete a user
+    DeleteUser();
+    ListAllUsers();
 }
 
-// Step 4: Add a new post linked to user 1
-var existingUser = context.Users.First();
-
-var newPost = new Post
+void ListAllUsers()
 {
-    Title = "My First Post",
-    Content = "This is the content.",
-    BlogId = 1,
-    PostTypeId = 1,
-    UserId = existingUser.UserId
-};
+    Console.WriteLine("\n--- All Users ---");
+    var users = context.Users.ToList();
+    foreach (var user in users)
+    {
+        Console.WriteLine($"Id: {user.UserId}, Name: {user.Name}, Email: {user.EmailAddress}, Phone: {user.PhoneNumber}");
+    }
+}
 
-context.Posts.Add(newPost);
-context.SaveChanges();
+void AddUser()
+{
+    Console.WriteLine("\n--- Adding New User ---");
+    var newUser = new User
+    {
+        Name = "David Brown",
+        EmailAddress = "david@email.com",
+        PhoneNumber = "555-4444"
+    };
+    context.Users.Add(newUser);
+    context.SaveChanges();
+    Console.WriteLine("User added!");
+}
 
-Console.WriteLine("Done! Users and post added.");
+void UpdateUser()
+{
+    Console.WriteLine("\n--- Updating User ---");
+    var user = context.Users.FirstOrDefault(u => u.Name == "David Brown");
+    if (user != null)
+    {
+        user.PhoneNumber = "555-9999";
+        context.SaveChanges();
+        Console.WriteLine("User updated!");
+    }
+}
+
+void DeleteUser()
+{
+    Console.WriteLine("\n--- Deleting User ---");
+    var user = context.Users.FirstOrDefault(u => u.Name == "David Brown");
+    if (user != null)
+    {
+        context.Users.Remove(user);
+        context.SaveChanges();
+        Console.WriteLine("User deleted!");
+    }
+}
