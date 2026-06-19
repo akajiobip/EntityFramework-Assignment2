@@ -65,6 +65,7 @@ void DeleteUser()
     var user = context.Users.FirstOrDefault(u => u.Name == "David Brown");
     if (user != null)
     {
+
         context.Users.Remove(user);
         context.SaveChanges();
         Console.WriteLine("User deleted!");
